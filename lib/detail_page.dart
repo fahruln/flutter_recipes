@@ -18,109 +18,107 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
     'Bahan 7'
   ];
   Set selection = {};
-  late TabController tabController;
-  @override
-  void initState() {
-    super.initState();
-    tabController = TabController(length: 2, vsync: this);
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(children: [
-        Container(
-          padding: const EdgeInsets.all(20),
-          alignment: Alignment.topLeft,
-          height: 300,
-          width: double.infinity,
-          color: const Color(0xff1FCC79),
-          child: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-              size: 30,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Food Name',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff2E3E5C)),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            alignment: Alignment.topLeft,
+            height: 350,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('images/nasigoreng.jpg'),
+                    fit: BoxFit.cover)),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: Color(0xff1FCC79)),
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 30,
+                ),
               ),
-              IconButton(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.bookmark_outline,
-                    size: 40,
-                    color: Color(0xff2E3E5C),
-                  ))
-            ],
+            ),
           ),
-        ),
-        TabBar(
-          controller: tabController,
-          tabs: const [
-            Tab(
-              text: 'Ingradient',
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Nasi Goreng',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff2E3E5C)),
+                ),
+                IconButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.favorite_outline,
+                      size: 40,
+                      color: Color(0xff2E3E5C),
+                    ))
+              ],
             ),
-            Tab(
-              text: 'Direction',
+          ),
+          const Divider(
+            color: Color(0xffF4F5F7),
+            thickness: 3,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          const Padding(
+            padding: EdgeInsets.only(left: 20),
+            child: Text(
+              'Ingradient',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff2E3E5C),
+                  fontSize: 18),
             ),
-          ],
-          indicatorColor: const Color(0xff1FCC79),
-          labelStyle:
-              const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          labelColor: const Color(0xff1FCC79),
-          unselectedLabelColor: Colors.grey,
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Flexible(
-          child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: 7,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: const ShapeDecoration(
-                        shape: CircleBorder(), color: Color(0xff1FCC79)),
-                    child: Text(
-                      '${index + 1}',
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                  ),
-                  title: Text(
-                    'Nama Bahan ${index + 1}',
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  trailing: const Text(
-                    'Serving',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                );
-              }),
-        )
-      ]),
+          ),
+          Container(
+            margin: const EdgeInsets.all(20),
+            width: double.infinity,
+            height: 250,
+            decoration: BoxDecoration(
+                color: const Color(0xffF4F5F7),
+                borderRadius: BorderRadius.circular(15)),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(left: 20),
+            child: Text(
+              'Direction',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff2E3E5C),
+                  fontSize: 18),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.all(20),
+            width: double.infinity,
+            height: 250,
+            decoration: BoxDecoration(
+                color: const Color(0xffF4F5F7),
+                borderRadius: BorderRadius.circular(15)),
+          ),
+        ]),
+      ),
     );
   }
 }

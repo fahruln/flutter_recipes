@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:teman_dapur/account_page.dart';
+import 'package:teman_dapur/add_recipe.dart';
 import 'package:teman_dapur/detail_page.dart';
-import 'package:teman_dapur/saved_page.dart';
-import 'package:teman_dapur/search_page.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -11,11 +11,7 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  static const List<Widget> _pages = <Widget>[
-    HomePage(),
-    SearchPage(),
-    SavePage(),
-  ];
+  final PageController _myPage = PageController(initialPage: 0);
 
   int _selectedIndex = 0;
 
@@ -29,22 +25,71 @@ class _NavBarState extends State<NavBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: _pages.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.bookmarks), label: 'Favorite')
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        elevation: 0,
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xff1FCC79),
+      body: PageView(
+        controller: _myPage,
+        onPageChanged: (i) {
+          _onItemTapped(i);
+        },
+        children: const [HomePage(), AccountPage()],
       ),
+      bottomNavigationBar: BottomAppBar(
+        notchMargin: 7,
+        shape: const CircularNotchedRectangle(),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                  alignment: Alignment.topCenter,
+                  onPressed: () {
+                    _myPage.jumpToPage(0);
+                  },
+                  icon: Icon(
+                    Icons.home_filled,
+                    size: 28,
+                    color: _selectedIndex == 0
+                        ? const Color(0xff1FCC79)
+                        : Colors.grey,
+                  )),
+              IconButton(
+                  alignment: Alignment.topCenter,
+                  onPressed: () {
+                    _myPage.jumpToPage(1);
+                  },
+                  icon: Icon(
+                    Icons.person,
+                    size: 28,
+                    color: _selectedIndex == 1
+                        ? const Color(0xff1FCC79)
+                        : Colors.grey,
+                  ))
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: SizedBox(
+        width: 70,
+        height: 70,
+        child: FittedBox(
+          child: FloatingActionButton(
+            elevation: 0,
+            backgroundColor: const Color(0xff1FCC79),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const AddRecipe(),
+                ),
+              );
+            },
+            child: const Icon(
+              Icons.add,
+              size: 28,
+            ),
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
@@ -81,8 +126,32 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             'Make your own food,\nstay at home',
             style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(
-            height: 40,
+          Container(
+            margin: const EdgeInsets.only(bottom: 30, top: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: const ShapeDecoration(
+                color: Color(0xfff5f6f8), shape: StadiumBorder()),
+            child: TextField(
+              cursorColor: Colors.black,
+              decoration: InputDecoration(
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 25.0),
+                  border: const OutlineInputBorder(borderSide: BorderSide.none),
+                  labelStyle: const TextStyle(color: Colors.grey, fontSize: 18),
+                  label: Row(
+                    children: const [
+                      Icon(
+                        Icons.search,
+                        size: 35,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('Ingradient or dishes')
+                    ],
+                  )),
+            ),
           ),
           TabBar(
             controller: tabController,
@@ -112,70 +181,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             color: Color(0xffF4F5F7),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'Recommended for you',
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color(0xff2E3E5C),
-                fontSize: 18),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 300,
-            child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                itemCount: 2,
-                itemBuilder: (BuildContext context, int index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const DetailPage(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                        alignment: Alignment.bottomCenter,
-                        margin: const EdgeInsets.only(right: 20),
-                        padding: const EdgeInsets.all(20),
-                        width: 300,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: const Color(0xff1FCC79)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Food Name',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
-                            IconButton(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.bookmark_outline,
-                                  size: 40,
-                                  color: Colors.white,
-                                ))
-                          ],
-                        )),
-                  );
-                }),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Popular',
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color(0xff2E3E5C),
-                fontSize: 18),
-          ),
-          const SizedBox(height: 20),
           GridView.builder(
               shrinkWrap: true,
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -194,33 +199,71 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(20),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                        color: const Color(0xff1FCC79),
+                        image: const DecorationImage(
+                            image: AssetImage('images/nasigoreng.jpg'),
+                            fit: BoxFit.cover),
                         borderRadius: BorderRadius.circular(15)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Stack(
                       children: [
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: IconButton(
-                              padding: const EdgeInsets.only(bottom: 10),
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.bookmark_outline,
-                                size: 40,
-                                color: Colors.white,
-                              )),
+                        Container(
+                          decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                  colors: [Colors.black, Colors.transparent],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.center),
+                              borderRadius: BorderRadius.circular(15)),
                         ),
-                        const Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Text(
-                            'Name',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10, left: 20, right: 10, bottom: 20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: const Color(0xff1FCC79)),
+                                  child: IconButton(
+                                      padding: EdgeInsets.zero,
+                                      onPressed: () {},
+                                      icon: const Icon(
+                                        Icons.favorite_outline,
+                                        size: 28,
+                                        color: Colors.white,
+                                      )),
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: const [
+                                    Text(
+                                      'Nasi Goreng',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      'Fahrul Nazar',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

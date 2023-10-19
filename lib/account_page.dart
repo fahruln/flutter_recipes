@@ -1,42 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:teman_dapur/detail_page.dart';
+import 'package:teman_dapur/saved_page.dart';
 
-class SavePage extends StatefulWidget {
-  const SavePage({super.key});
+class AccountPage extends StatefulWidget {
+  const AccountPage({super.key});
 
   @override
-  State<SavePage> createState() => _SavePageState();
+  State<AccountPage> createState() => _AccountPageState();
 }
 
-class _SavePageState extends State<SavePage> {
+class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Saved Recipes',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-        centerTitle: true,
-      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(
-              height: 25,
+              height: 60,
+            ),
+            const Text(
+              'Fahrul Nazar',
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            ListTile(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const SavePage(),
+                  ),
+                );
+              },
+              title: const Text('Liked Recipes'),
+              leading: const Icon(Icons.favorite_outline),
+              trailing: const Icon(Icons.navigate_next),
+            ),
+            const Divider(),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 20, top: 20),
+                child: Text(
+                  'Your Recipes',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff2E3E5C),
+                      fontSize: 18),
+                ),
+              ),
             ),
             Flexible(
               child: ListView.builder(
+                  padding: const EdgeInsets.all(20),
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: 5,
+                  itemCount: 4,
                   itemBuilder: (BuildContext context, int index) {
                     return Column(
                       children: [
@@ -70,36 +93,20 @@ class _SavePageState extends State<SavePage> {
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                     ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: const [
-                                        Text(
-                                          'Nasi Goreng',
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          'Fahrul Nazar',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.black),
-                                        ),
-                                      ],
+                                    const Text(
+                                      'Nasi Goreng',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
                                     ),
                                   ],
                                 ),
                                 IconButton(
                                   padding: const EdgeInsets.only(right: 10),
                                   icon: const Icon(
-                                    Icons.favorite,
-                                    color: Color(0xff1FCC79),
+                                    Icons.more_horiz,
+                                    color: Colors.black,
                                     size: 30,
                                   ),
                                   onPressed: () {},
