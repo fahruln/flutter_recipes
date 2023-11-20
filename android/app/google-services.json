@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "356529809913",
+    "project_id": "temandapur-188fa",
+    "storage_bucket": "temandapur-188fa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:356529809913:android:c08b66c3538418d37c3528",
+        "android_client_info": {
+          "package_name": "com.example.teman_dapur"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrUIgAEbrnZ3IYuHst1Lj0UuIjQlu75rk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

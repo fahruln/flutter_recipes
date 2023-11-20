@@ -1,7 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:teman_dapur/database.dart';
+import 'package:teman_dapur/home_page.dart';
 import 'package:teman_dapur/login_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:teman_dapur/recipe.dart';
+import 'firebase_options.dart';
 
-void main() {
+late final FirebaseApp app;
+late final FirebaseAuth auth;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  app = await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  auth = FirebaseAuth.instanceFor(app: app);
   runApp(const MyApp());
 }
 
@@ -11,8 +25,16 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-        debugShowCheckedModeBanner: false, home: StartedPage());
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: StreamBuilder<User?>(
+            stream: auth.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return const NavBar();
+              }
+              return const LoginPage();
+            }));
   }
 }
 
@@ -71,5 +93,54 @@ class StartedPage extends StatelessWidget {
                 )),
           ],
         ));
+  }
+
+  // Retrieve Tasks
+  Widget _getTasks() {
+    return StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('recipes')
+            .where('category', isEqualTo: 1)
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasData) {
+            return GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 200,
+                  childAspectRatio: 2 / 2.5,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20),
+              padding: const EdgeInsets.all(10.0),
+              itemBuilder: (BuildContext context, int index) => RecipeGrid(
+                image: snapshot.data!.docs[index]['image'],
+                category: snapshot.data!.docs[index]['category'],
+                title: snapshot.data!.docs[index]['title'],
+                ingradient: snapshot.data!.docs[index]['ingradient'],
+                direction: snapshot.data!.docs[index]['direction'],
+                username: snapshot.data!.docs[index]['username'],
+                id: snapshot.data!.docs[index].id,
+              ),
+              itemCount: snapshot.data!.docs.length,
+            );
+          } else {
+            return Container();
+          }
+        });
+  }
+
+  void _updateTask(
+      String title, String ingradient, String direction, String id) {
+    var task = <String, dynamic>{
+      'title': title,
+      'ingradient': ingradient,
+      'direction': direction,
+      'timestamp': DateTime.now().millisecondsSinceEpoch
+    };
+    Database.updateRecipe(id, task);
+  }
+
+  void _deleteTask(String id) {
+    Database.deleteRecipe(id);
   }
 }

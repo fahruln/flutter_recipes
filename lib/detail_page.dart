@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({super.key});
+  const DetailPage({
+    super.key,
+    required this.image,
+    required this.category,
+    required this.title,
+    required this.ingradient,
+    required this.direction,
+    required this.username,
+  });
+
+  final int category;
+  final String image, title, ingradient, direction, username;
 
   @override
   State<DetailPage> createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
-  final list = [
-    'Bahan 1',
-    'Bahan 2',
-    'Bahan 3',
-    'Bahan 4',
-    'Bahan 5',
-    'Bahan 6',
-    'Bahan 7'
-  ];
   Set selection = {};
 
   @override
@@ -30,10 +32,9 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
             alignment: Alignment.topLeft,
             height: 350,
             width: double.infinity,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage('images/nasigoreng.jpg'),
-                    fit: BoxFit.cover)),
+                    image: NetworkImage(widget.image), fit: BoxFit.cover)),
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: const BoxDecoration(
@@ -51,17 +52,18 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
               ),
             ),
           ),
-          Padding(
+          Container(
             padding: const EdgeInsets.all(20),
+            color: const Color(0xff1FCC79),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Nasi Goreng',
-                  style: TextStyle(
+                Text(
+                  widget.title,
+                  style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xff2E3E5C)),
+                      color: Colors.white),
                 ),
                 IconButton(
                     padding: EdgeInsets.zero,
@@ -69,14 +71,10 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                     icon: const Icon(
                       Icons.favorite_outline,
                       size: 40,
-                      color: Color(0xff2E3E5C),
+                      color: Colors.white,
                     ))
               ],
             ),
-          ),
-          const Divider(
-            color: Color(0xffF4F5F7),
-            thickness: 3,
           ),
           const SizedBox(
             height: 20,

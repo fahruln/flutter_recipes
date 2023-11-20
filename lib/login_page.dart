@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teman_dapur/home_page.dart';
 import 'package:teman_dapur/signup_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -11,6 +12,9 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   String? _password;
 
@@ -59,11 +63,12 @@ class _LoginPageState extends State<LoginPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: const ShapeDecoration(
                       color: Color(0xfff5f6f8), shape: StadiumBorder()),
-                  child: const TextField(
-                    decoration: InputDecoration(
+                  child: TextFormField(
+                    controller: emailController,
+                    decoration: const InputDecoration(
                         border: OutlineInputBorder(borderSide: BorderSide.none),
                         hintStyle: TextStyle(color: Colors.grey),
-                        hintText: 'Username'),
+                        hintText: 'Email'),
                   ),
                 ),
                 Container(
@@ -72,17 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: const ShapeDecoration(
                       color: Color(0xfff5f6f8), shape: StadiumBorder()),
                   child: TextFormField(
-                    validator: (val) {
-                      if (val != null && val.isNotEmpty) {
-                        if (val.length < 6) {
-                          return "Password length should be atleast 6";
-                        } else {
-                          return null;
-                        }
-                      } else {
-                        return "Password cannot be empty";
-                      }
-                    },
+                    controller: passwordController,
                     onSaved: (val) => _password = val,
                     obscureText: _obscureText,
                     decoration: InputDecoration(
@@ -112,12 +107,38 @@ class _LoginPageState extends State<LoginPage> {
                         backgroundColor:
                             MaterialStateProperty.all(const Color(0xff1FCC79)),
                       ),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const NavBar(),
-                          ),
-                        );
+                      onPressed: () async {
+                        try {
+                          await FirebaseAuth.instance
+                              .signInWithEmailAndPassword(
+                            email: emailController.text,
+                            password: passwordController.text,
+                          );
+                          if (context.mounted) {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => const NavBar(),
+                              ),
+                            );
+                          }
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'user-not-found') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                invalidCreateUser(
+                                    'No user found for that email.'));
+                          } else if (e.code == 'wrong-password') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                invalidCreateUser(
+                                    'Wrong password provided for that user.'));
+                          } else if (e.code == 'invalid-email') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                invalidCreateUser(
+                                    "Please provide a valid email"));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                invalidCreateUser(e.code.toString()));
+                          }
+                        }
                       },
                       child: const Text(
                         'Login',
@@ -162,4 +183,18 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+}
+
+SnackBar invalidUserLogin(String e) {
+  return SnackBar(
+    behavior: SnackBarBehavior.floating,
+    showCloseIcon: true,
+    backgroundColor: Colors.red,
+    closeIconColor: Colors.white,
+    padding: const EdgeInsets.all(10),
+    content: Text(
+      e,
+      style: const TextStyle(fontSize: 16),
+    ),
+  );
 }

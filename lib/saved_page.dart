@@ -41,13 +41,7 @@ class _SavePageState extends State<SavePage> {
                     return Column(
                       children: [
                         InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const DetailPage(),
-                              ),
-                            );
-                          },
+                          onTap: () {},
                           child: Container(
                             padding: const EdgeInsets.only(right: 10),
                             decoration: BoxDecoration(
@@ -70,10 +64,10 @@ class _SavePageState extends State<SavePage> {
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                     ),
-                                    Column(
+                                    const Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      children: const [
+                                      children: [
                                         Text(
                                           'Nasi Goreng',
                                           style: TextStyle(

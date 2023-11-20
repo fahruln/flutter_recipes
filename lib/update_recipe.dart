@@ -10,21 +10,32 @@ import 'dart:io';
 
 enum ImageSourceType { gallery, camera }
 
-class AddRecipe extends StatefulWidget {
-  const AddRecipe({super.key, this.type});
+class UpdateRecipe extends StatefulWidget {
+  const UpdateRecipe(
+      {super.key,
+      this.type,
+      required this.image,
+      required this.category,
+      required this.title,
+      required this.ingradient,
+      required this.direction,
+      required this.id});
   final type;
 
+  final int category;
+  final String image, title, ingradient, direction, id;
+
   @override
-  State<AddRecipe> createState() => _AddRecipeState(type);
+  State<UpdateRecipe> createState() => _UpdateRecipeState(type);
 }
 
-class _AddRecipeState extends State<AddRecipe> {
+class _UpdateRecipeState extends State<UpdateRecipe> {
   File? _image;
   Uint8List? _imageByte;
   var imagePicker;
   var type;
 
-  _AddRecipeState(this.type);
+  _UpdateRecipeState(this.type);
 
   final listChoices = <CategoryChoice>[
     CategoryChoice(1, 'Breakfast'),
@@ -41,6 +52,7 @@ class _AddRecipeState extends State<AddRecipe> {
   void initState() {
     // ignore: todo
     // TODO: implement initState
+    idSelected = widget.category;
     super.initState();
     imagePicker = ImagePicker();
   }
@@ -51,13 +63,21 @@ class _AddRecipeState extends State<AddRecipe> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
-          'Make Recipe',
+          'Edit Recipe',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
+        actions: [
+          TextButton(
+              onPressed: () => Database.deleteRecipe(widget.id),
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ))
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -83,33 +103,14 @@ class _AddRecipeState extends State<AddRecipe> {
                 setState(() {});
               },
               child: SizedBox(
-                width: double.infinity - 40,
-                height: 200,
-                child: _imageByte != null
-                    ? Image.memory(
-                        _imageByte!,
-                        width: double.infinity,
-                        height: 200.0,
-                        fit: BoxFit.cover,
-                      )
-                    : DottedBorder(
-                        color: const Color(0xff1FCC79),
-                        strokeWidth: 2,
-                        dashPattern: const [
-                          7,
-                          7,
-                        ],
-                        child: const SizedBox(
-                          width: double.infinity,
-                          height: 200,
-                          child: Icon(
-                            Icons.photo,
-                            color: Color(0xff1FCC79),
-                            size: 70,
-                          ),
-                        ),
-                      ),
-              ),
+                  width: double.infinity - 40,
+                  height: 200,
+                  child: Image.network(
+                    widget.image,
+                    width: double.infinity,
+                    height: 200.0,
+                    fit: BoxFit.cover,
+                  )),
             ),
             const SizedBox(
               height: 30,
@@ -160,7 +161,7 @@ class _AddRecipeState extends State<AddRecipe> {
                   color: const Color(0xfff5f6f8),
                   borderRadius: BorderRadius.circular(10)),
               child: TextField(
-                controller: titleController,
+                controller: titleController..text = widget.title,
                 decoration: const InputDecoration(
                     border: OutlineInputBorder(borderSide: BorderSide.none),
                     hintStyle: TextStyle(color: Colors.grey),
@@ -181,7 +182,7 @@ class _AddRecipeState extends State<AddRecipe> {
                   color: const Color(0xfff5f6f8),
                   borderRadius: BorderRadius.circular(10)),
               child: TextField(
-                controller: ingradientController,
+                controller: ingradientController..text = widget.ingradient,
                 keyboardType: TextInputType.multiline,
                 minLines: 6,
                 maxLines: null,
@@ -205,7 +206,7 @@ class _AddRecipeState extends State<AddRecipe> {
                   color: const Color(0xfff5f6f8),
                   borderRadius: BorderRadius.circular(10)),
               child: TextField(
-                controller: directionController,
+                controller: directionController..text = widget.direction,
                 keyboardType: TextInputType.multiline,
                 minLines: 6,
                 maxLines: null,
@@ -226,22 +227,12 @@ class _AddRecipeState extends State<AddRecipe> {
                         MaterialStateProperty.all(const Color(0xff1FCC79)),
                   ),
                   onPressed: () async {
-                    var imageName =
-                        DateTime.now().millisecondsSinceEpoch.toString();
-                    var storageRef =
-                        FirebaseStorage.instance.ref().child('$imageName.jpg');
-                    var metadata = SettableMetadata(
-                      contentType: "image/jpeg",
-                    );
-                    var uploadTask = storageRef.putData(_imageByte!, metadata);
-                    var downloadUrl =
-                        await (await uploadTask).ref.getDownloadURL();
-                    _handleDialogSubmission(
-                        downloadUrl,
+                    _updateRecipe(
                         idSelected,
                         titleController.text,
                         ingradientController.text,
-                        directionController.text);
+                        directionController.text,
+                        widget.id);
                     if (context.mounted) {
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const NavBar(),
@@ -254,7 +245,7 @@ class _AddRecipeState extends State<AddRecipe> {
                       closeIconColor: Colors.white,
                       padding: EdgeInsets.all(10),
                       content: Text(
-                        'Recipe has been successfully added',
+                        'Recipe has been successfully saved',
                         style: TextStyle(fontSize: 16),
                       ),
                     );
@@ -263,7 +254,7 @@ class _AddRecipeState extends State<AddRecipe> {
                     }
                   },
                   child: const Text(
-                    'Add Recipe',
+                    'Save',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -274,6 +265,18 @@ class _AddRecipeState extends State<AddRecipe> {
         ),
       ),
     );
+  }
+
+  void _updateRecipe(int category, String title, String ingradient,
+      String direction, String id) {
+    var task = <String, dynamic>{
+      'category': category,
+      'title': title,
+      'ingradient': ingradient,
+      'direction': direction,
+      'timestamp': DateTime.now(),
+    };
+    Database.updateRecipe(id, task);
   }
 
   void _handleDialogSubmission(String image, int category, String title,
