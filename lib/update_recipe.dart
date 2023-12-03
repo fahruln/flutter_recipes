@@ -2,10 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:teman_dapur/database.dart';
 import 'package:teman_dapur/home_page.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
 enum ImageSourceType { gallery, camera }

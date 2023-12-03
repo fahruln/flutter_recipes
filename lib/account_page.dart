@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:teman_dapur/detail_page.dart';
-import 'package:teman_dapur/login_page.dart';
-import 'package:teman_dapur/saved_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:teman_dapur/update_recipe.dart';
 

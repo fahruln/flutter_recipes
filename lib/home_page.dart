@@ -1,11 +1,7 @@
-import 'dart:typed_data';
-
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:teman_dapur/account_page.dart';
 import 'package:teman_dapur/add_recipe.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:teman_dapur/detail_page.dart';
 import 'package:teman_dapur/recipe.dart';
 
 class NavBar extends StatefulWidget {
