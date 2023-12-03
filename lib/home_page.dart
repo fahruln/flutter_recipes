@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   late TabController tabController;
 
-  String? searchKey;
+  var searchKey = "";
 
   @override
   void initState() {
@@ -126,50 +126,43 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(180),
+          preferredSize: const Size.fromHeight(160),
           child: AppBar(
             elevation: 0,
             backgroundColor: Colors.white,
             flexibleSpace: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 20, top: 40),
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    decoration: const ShapeDecoration(
-                        color: Color(0xfff5f6f8), shape: StadiumBorder()),
-                    child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          searchKey = value;
-                        });
-                      },
-                      cursorColor: Colors.black,
-                      decoration: const InputDecoration(
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                          contentPadding: EdgeInsets.symmetric(vertical: 25.0),
-                          border:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          labelStyle:
-                              TextStyle(color: Colors.grey, fontSize: 18),
-                          label: Row(
-                            children: [
-                              Icon(
-                                Icons.search,
-                                size: 35,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text('Ingradient or dishes')
-                            ],
-                          )),
-                    ),
-                  ),
-                ],
+              child: Container(
+                margin: const EdgeInsets.only(top: 30),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: const ShapeDecoration(
+                    color: Color(0xfff5f6f8), shape: StadiumBorder()),
+                child: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      searchKey = value;
+                    });
+                  },
+                  cursorColor: Colors.black,
+                  decoration: const InputDecoration(
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
+                      contentPadding: EdgeInsets.symmetric(vertical: 25.0),
+                      border: OutlineInputBorder(borderSide: BorderSide.none),
+                      labelStyle: TextStyle(color: Colors.grey, fontSize: 18),
+                      label: Row(
+                        children: [
+                          Icon(
+                            Icons.search,
+                            size: 35,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text('Ingradient or dishes')
+                        ],
+                      )),
+                ),
               ),
             ),
             bottom: TabBar(
@@ -192,7 +185,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               indicatorColor: const Color(0xff1FCC79),
               labelStyle:
                   const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              labelColor: Colors.grey,
+              labelColor: const Color(0xff1FCC79),
               unselectedLabelColor: Colors.grey,
             ),
           ),
@@ -201,16 +194,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           padding: const EdgeInsets.all(20),
           child: TabBarView(controller: tabController, children: [
             StreamBuilder(
-                stream: searchKey == null
-                    ? FirebaseFirestore.instance
-                        .collection('recipes')
-                        .snapshots()
-                    : FirebaseFirestore.instance
-                        .collection('recipes')
-                        .where('title', isEqualTo: searchKey)
-                        .snapshots(),
+                stream: FirebaseFirestore.instance
+                    .collection('recipes')
+                    .orderBy('title')
+                    .startAt([searchKey]).endAt(
+                        ["$searchKey\uf8ff"]).snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Text("Loading...");
+                  }
                   if (snapshot.hasData) {
                     return GridView.builder(
                       gridDelegate:
@@ -220,14 +213,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               crossAxisSpacing: 20,
                               mainAxisSpacing: 20),
                       itemBuilder: (BuildContext context, int index) {
+                        var data = snapshot.data!.docs[index];
                         return RecipeGrid(
-                          image: snapshot.data!.docs[index]['image'],
-                          category: snapshot.data!.docs[index]['category'],
-                          title: snapshot.data!.docs[index]['title'],
-                          ingradient: snapshot.data!.docs[index]['ingradient'],
-                          direction: snapshot.data!.docs[index]['direction'],
-                          username: snapshot.data!.docs[index]['username'],
-                          id: snapshot.data!.docs[index].id,
+                          image: data['image'],
+                          category: data['category'],
+                          title: data['title'],
+                          ingradient: data['ingradient'],
+                          direction: data['direction'],
+                          username: data['username'],
+                          id: data.id,
                         );
                       },
                       itemCount: snapshot.data!.docs.length,

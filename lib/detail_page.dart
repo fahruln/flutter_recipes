@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({
@@ -58,21 +59,20 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  widget.title,
-                  style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                SizedBox(
+                  width: 250,
+                  child: Text(
+                    widget.title,
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
                 ),
-                IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.favorite_outline,
-                      size: 40,
-                      color: Colors.white,
-                    ))
+                Text(
+                  "by ${FirebaseAuth.instance.currentUser!.displayName}",
+                  style: const TextStyle(color: Colors.white),
+                )
               ],
             ),
           ),
@@ -92,10 +92,11 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
           Container(
             margin: const EdgeInsets.all(20),
             width: double.infinity,
-            height: 250,
+            padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
                 color: const Color(0xffF4F5F7),
                 borderRadius: BorderRadius.circular(15)),
+            child: Text(widget.ingradient),
           ),
           const Padding(
             padding: EdgeInsets.only(left: 20),
@@ -110,10 +111,11 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
           Container(
             margin: const EdgeInsets.all(20),
             width: double.infinity,
-            height: 250,
+            padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
                 color: const Color(0xffF4F5F7),
                 borderRadius: BorderRadius.circular(15)),
+            child: Text(widget.direction),
           ),
         ]),
       ),

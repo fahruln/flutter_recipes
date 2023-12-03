@@ -22,22 +22,34 @@ class _AccountPageState extends State<AccountPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(
-            height: 60,
+            height: 50,
           ),
           Text(
             '${FirebaseAuth.instance.currentUser!.displayName}',
             style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),
           const SizedBox(
-            height: 15,
+            height: 20,
           ),
           TextButton(
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
               },
-              child: const Text(
-                'Logout',
-                style: TextStyle(color: Colors.red, fontSize: 16),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.logout,
+                    color: Colors.red,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
+                ],
               )),
           const SizedBox(
             height: 30,
